@@ -1,6 +1,10 @@
 package com.example.demo.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Objects;
+
+import static org.apache.commons.lang3.StringUtils.*;
 
 public class Employee {
     private String firstName;
@@ -12,9 +16,9 @@ public class Employee {
     private static int counter;
 
     public Employee(String lastName, String firstName, String middleName, int department, double salary) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.middleName = middleName;
+        this.firstName = capitalize(firstName.toLowerCase());
+        this.lastName = capitalize(lastName.toLowerCase());
+        this.middleName = capitalize(middleName.toLowerCase());
         this.department = department;
         this.salary = salary;
     }

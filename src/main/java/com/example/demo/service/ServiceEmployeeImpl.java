@@ -2,11 +2,14 @@ package com.example.demo.service;
 
 import com.example.demo.exceptions.EmployeeAlreadyAddedException;
 import com.example.demo.exceptions.EmployeeNotFoundException;
+import com.example.demo.exceptions.InvalidInputException;
 import com.example.demo.model.Employee;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.StringUtils.*;
 
 @Service
 public class ServiceEmployeeImpl implements ServiceEmployee {
@@ -61,6 +64,7 @@ public class ServiceEmployeeImpl implements ServiceEmployee {
 
     @Override
     public Employee addEmployee(String lastName, String firstName, String middleName, int department, double salary) {
+        validateInput(lastName, firstName, middleName);
         Employee employee = new Employee(lastName, firstName, middleName, department, salary);
         if(employees.contains(employee)) {
             throw new EmployeeAlreadyAddedException("Такой сотрудник уже усть.");
@@ -72,6 +76,7 @@ public class ServiceEmployeeImpl implements ServiceEmployee {
 
     @Override
     public Employee removeEmployee(String lastName, String firstName, String middleName) {
+        validateInput(lastName, firstName, middleName);
         Employee employee = findEmployee(lastName, firstName,middleName);
         employees.remove(employee);
         return employee;
@@ -80,12 +85,19 @@ public class ServiceEmployeeImpl implements ServiceEmployee {
 
     @Override
     public Employee findEmployee(String lastName, String firstName, String middleName) {
+        validateInput(lastName, firstName, middleName);
         final Optional<Employee> employee = employees.stream()
                 .filter(e -> e.getLastName().equals(lastName)
                         && e.getFirstName().equals(firstName)
                         && e.getMiddleName().equals(middleName))
                 .findAny();
         return employee.orElseThrow(() -> new EmployeeNotFoundException("Сотрудник не найден."));
+    }
+
+    private void validateInput(String lastName, String firstName, String middleName){
+        if(!(isAlpha(firstName) && isAlpha(lastName) && isAlpha(middleName))){
+            throw new InvalidInputException();
+        }
     }
 
 }
